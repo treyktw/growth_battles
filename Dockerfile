@@ -1,10 +1,7 @@
-# Use an Ubuntu base image
 FROM ubuntu:20.04
 
-# Avoid prompts from apt
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     git \
@@ -20,17 +17,19 @@ RUN apt-get update && apt-get install -y \
     libpulse-dev \
     libudev-dev \
     libglu1-mesa-dev \
-    xorg-dev
+    xorg-dev \
+    nvidia-container-toolkit
 
-# Install NVIDIA Container Toolkit
-RUN apt-get install -y nvidia-container-toolkit
+# Install UE5 dependencies (you may need to adjust this based on your specific UE5 version)
+RUN apt-get install -y \
+    libopengl0 \
+    libvulkan1
 
-# Set up the workspace
-WORKDIR /workspace
+WORKDIR /ue5project
 
-# Copy backup script
-COPY backup-script.sh /workspace/backup-script.sh
-RUN chmod +x /workspace/backup-script.sh
+# Copy the UE5 project files
+COPY . .
 
-# Set the entrypoint
-ENTRYPOINT ["/bin/bash"]
+# Set up any additional configuration needed for your UE5 server
+
+CMD ["/bin/bash", "-c", "while true; do sleep 1000; done"]
