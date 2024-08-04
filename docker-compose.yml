@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  ue5-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ue5-server:latest
+    container_name: ue5-server
+    volumes:
+      - E:/path/to/ue5/project:/workspace/project
+      - E:/path/to/UnrealEngine:/opt/UnrealEngine
+      - ue5-backups:/backups
+    ports:
+      - "7777:7777/udp"  # Default UE5 game port
+      - "7777:7777/tcp"  # TCP fallback
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: tail -f /dev/null  # Keep container running
+
+volumes:
+  ue5-backups:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: E:/path/on/host/for/backups
